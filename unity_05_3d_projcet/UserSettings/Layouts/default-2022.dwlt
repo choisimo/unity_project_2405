@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1545.143
     height: 1130.2858
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Scene
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -165,8 +165,8 @@ MonoBehaviour:
     y: 0
     width: 1157.7142
     height: 612.5714
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -915,7 +915,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 18fbffff
+      m_ExpandedIDs: 64faffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -994,14 +994,14 @@ MonoBehaviour:
   m_LastFolders:
   - Assets
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\WorkSpace\unity\unity_05_3d_projcet
+  m_LastProjectPath: C:\WorkSpace\git\unity_project_2405\unity_05_3d_projcet
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 8a590000
-    m_LastClickedID: 22922
-    m_ExpandedIDs: 000000008a59000000ca9a3b
+    m_SelectedIDs: be590000
+    m_LastClickedID: 22974
+    m_ExpandedIDs: 00000000be59000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1029,7 +1029,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 
+    m_ExpandedIDs: 00000000be590000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
