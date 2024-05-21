@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - secondCamera
+  - wall
+  - bottom
+  - Ground
   layers:
   - Default
   - TransparentFX
