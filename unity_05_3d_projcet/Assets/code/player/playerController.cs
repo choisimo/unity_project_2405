@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float turnSpeed = 720f; // ȸ�� �ӵ� (��/��)
+    public float turnSpeed = 720f; 
     public float jumpForce = 4f;
     public float jumpMoveSpeed = 10f;
     public GameObject[] weapons;
@@ -117,7 +117,9 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Speed", speed);
     }
 */
-    void ItemSwap(){
+
+    void ItemSwap()
+    {
         int weaponIndex = -1;
         if (ItemSwapDown1) weaponIndex = 0;
         if (ItemSwapDown2) weaponIndex = 1;
@@ -125,30 +127,32 @@ public class PlayerController : MonoBehaviour
 
         if ((ItemSwapDown1 || ItemSwapDown2 || ItemSwapDown3) && !isJumping)
         {
-            if (equipWeapon != null)
+            if (weaponIndex >= 0 && hasWeapons[weaponIndex])
             {
-                // Toggle off if the same weapon is selected
-                if (equipWeapon == weapons[weaponIndex])
+                if (equipWeapon != null)
                 {
-                    equipWeapon.SetActive(false);
-                    equipWeapon = null;
+                    // Toggle off if the same weapon is selected
+                    if (equipWeapon == weapons[weaponIndex])
+                    {
+                        equipWeapon.SetActive(false);
+                        equipWeapon = null;
+                    }
+                    else
+                    {
+                        equipWeapon.SetActive(false);
+                        equipWeapon = weapons[weaponIndex];
+                        equipWeapon.SetActive(true);
+                    }
                 }
                 else
                 {
-                    equipWeapon.SetActive(false);
+                    // Equip new weapon if none is currently equipped
                     equipWeapon = weapons[weaponIndex];
                     equipWeapon.SetActive(true);
                 }
             }
-            else
-            {
-                // Equip new weapon if none is currently equipped
-                equipWeapon = weapons[weaponIndex];
-                equipWeapon.SetActive(true);
-            }
         }
     }
-
     void Interaction()
     {
         if(iDown && nearObject != null){

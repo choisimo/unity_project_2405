@@ -6,10 +6,10 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public enum ItemType {
-        Ammo, fuel, Grenade, hear, weapon
+        Ammo, fuel, Grenade, life , weapon
     };
 
-    public ItemType type;
+    public ItemType itemtype;
     public int itemIndex;
     public string itemName;
     void Update()
