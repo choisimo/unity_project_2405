@@ -8,6 +8,9 @@ TagManager:
   - wall
   - bottom
   - Ground
+  - weapon
+  - item
+  - suit
   layers:
   - Default
   - TransparentFX

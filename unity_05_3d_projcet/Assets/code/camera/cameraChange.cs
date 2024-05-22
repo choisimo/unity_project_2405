@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine;
-
 public class CameraSwitcher : MonoBehaviour
 {
     public Camera mainCamera;
@@ -11,24 +9,24 @@ public class CameraSwitcher : MonoBehaviour
 
     void Start()
     {
-        // ÃÊ±â »óÅÂ ¼³Á¤: ¸ÞÀÎ Ä«¸Þ¶ó È°¼ºÈ­, º¸Á¶ Ä«¸Þ¶ó ºñÈ°¼ºÈ­
+        // ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ È°ï¿½ï¿½È­, ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
         mainCamera.enabled = true;
         secondaryCamera.enabled = false;
     }
 
     void Update()
     {
-        // C Å°¸¦ ´©¸¦ ¶§¸¸ ÀÛµ¿
+        // C Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ûµï¿½
         if (Input.GetKey(KeyCode.C))
         {
-            // 1¹ø Å°¸¦ ´­·¶À» ¶§ ¸ÞÀÎ Ä«¸Þ¶ó·Î ÀüÈ¯
+            // 1ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½ ï¿½ï¿½È¯
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                
                     SwitchToMainCamera();
                 
             }
-            // 2¹ø Å°¸¦ ´­·¶À» ¶§ º¸Á¶ Ä«¸Þ¶ó·Î ÀüÈ¯
+            // 2ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½ ï¿½ï¿½È¯
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 
