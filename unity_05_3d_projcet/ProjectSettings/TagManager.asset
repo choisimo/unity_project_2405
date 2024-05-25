@@ -11,6 +11,8 @@ TagManager:
   - weapon
   - item
   - suit
+  - Melee
+  - Range
   layers:
   - Default
   - TransparentFX

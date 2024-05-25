@@ -1,8 +1,11 @@
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float walkSpeed = 5f;
+    public float runSpeed = 10f;
     public float turnSpeed = 720f; 
     public float jumpForce = 4f;
     public float jumpMoveSpeed = 10f;
@@ -13,31 +16,39 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
     private bool iDown;
+    private bool fDown;
+    private bool runDown;
+    private bool isFireReady;
+    private bool isSwap;
+    
     private bool ItemSwapDown1;
     private bool ItemSwapDown2;
     private bool ItemSwapDown3;
     // item object
     GameObject nearObject;
-    GameObject equipWeapon;
+    weapon equipWeapon;
 
+    float fireDelay;
     Animator animator;
     Vector3 moveVec3;
 
     void GetInput()
     {
         iDown = Input.GetButtonDown("Interaction");
+        fDown = Input.GetButtonDown("Fire1");
+        runDown = Input.GetButtonDown("Run"); //running active
         ItemSwapDown1 = Input.GetButtonDown("ItemSwap1");
         ItemSwapDown2 = Input.GetButtonDown("ItemSwap2");
         ItemSwapDown3 = Input.GetButtonDown("ItemSwap3");
     }
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z�� ȸ�� ����
+        //rb = GetComponent<Rigidbody>();
+        //rb.useGravity = true;
+        //rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z�� ȸ�� ����
     }
 
-    private void Awake()
+    void Awake()
     {
         animator = GetComponentInChildren<Animator>();
     }
@@ -46,6 +57,7 @@ public class PlayerController : MonoBehaviour
         GetInput();
         MovePlayer();
         Jump();
+        Attack();
         Interaction();
         ItemSwap();
         //UpdateAnimator();
@@ -65,9 +77,11 @@ public class PlayerController : MonoBehaviour
 
         moveVec3 = new Vector3(moveX, 0, moveZ).normalized;
 
-        animator.SetBool("isWalk", moveVec3 != Vector3.zero);
 
-        float currentMoveSpeed = isGrounded ? jumpMoveSpeed : moveSpeed;
+        animator.SetBool("isWalk", moveVec3 != Vector3.zero);
+        animator.SetBool("isRun", runDown);
+
+        float currentMoveSpeed = isGrounded ? jumpMoveSpeed : walkSpeed;
 
         if (moveVec3 != Vector3.zero)
         {
@@ -82,11 +96,25 @@ public class PlayerController : MonoBehaviour
         if (isGrounded && Input.GetButtonDown("Jump"))
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false; // ������ ������ �Ŀ��� �ٴڿ� ���� ����
+            isGrounded = false; 
             isJumping = true;
         }
     }
 
+    void Attack(){
+        if (equipWeapon == null){
+            return;
+        }
+
+        fireDelay += Time.deltaTime;
+        isFireReady = equipWeapon.rate < fireDelay;
+
+        if (fDown && isFireReady && !isSwap){
+            equipWeapon.Use();
+            animator.SetTrigger("doSwing");
+            fireDelay = 0;
+        }
+    }
     void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall"))
@@ -120,6 +148,7 @@ public class PlayerController : MonoBehaviour
 
     void ItemSwap()
     {
+        isSwap = true;
         int weaponIndex = -1;
         if (ItemSwapDown1) weaponIndex = 0;
         if (ItemSwapDown2) weaponIndex = 1;
@@ -134,21 +163,21 @@ public class PlayerController : MonoBehaviour
                     // Toggle off if the same weapon is selected
                     if (equipWeapon == weapons[weaponIndex])
                     {
-                        equipWeapon.SetActive(false);
+                        equipWeapon.gameObject.SetActive(false);
                         equipWeapon = null;
                     }
                     else
                     {
-                        equipWeapon.SetActive(false);
-                        equipWeapon = weapons[weaponIndex];
-                        equipWeapon.SetActive(true);
+                        equipWeapon.gameObject.SetActive(false);
+                        equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
+                        equipWeapon.gameObject.SetActive(true);
                     }
                 }
                 else
                 {
                     // Equip new weapon if none is currently equipped
-                    equipWeapon = weapons[weaponIndex];
-                    equipWeapon.SetActive(true);
+                    equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
+                    equipWeapon.gameObject.SetActive(true);
                 }
             }
         }
@@ -175,4 +204,6 @@ public class PlayerController : MonoBehaviour
     void OnTriggerExit(Collider other){
         nearObject = null;
     }
+
+    
 }
