@@ -6,33 +6,34 @@ public class CameraSwitcher : MonoBehaviour
 {
     public Camera mainCamera;
     public Camera secondaryCamera;
+    public Camera trainCamera;
 
     void Start()
     {
-        // �ʱ� ���� ����: ���� ī�޶� Ȱ��ȭ, ���� ī�޶� ��Ȱ��ȭ
         mainCamera.enabled = true;
         secondaryCamera.enabled = false;
+        trainCamera.enabled = false;
     }
 
     void Update()
     {
-        // C Ű�� ���� ���� �۵�
         if (Input.GetKey(KeyCode.C))
         {
-            // 1�� Ű�� ������ �� ���� ī�޶�� ��ȯ
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                
                     SwitchToMainCamera();
                 
             }
-            // 2�� Ű�� ������ �� ���� ī�޶�� ��ȯ
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 
                     SwitchToSecondaryCamera();
                 
             }
+            /**
+            train 탑승 시 카메라 트레인으로 전환?
+            */
         }
     }
 
