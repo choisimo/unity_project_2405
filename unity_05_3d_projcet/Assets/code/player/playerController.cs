@@ -4,34 +4,58 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 5f;
-    public float runSpeed = 10f;
-    public float turnSpeed = 720f; 
-    public float jumpForce = 4f;
-    public float jumpMoveSpeed = 10f;
-    public GameObject[] weapons;
-    public bool[] hasWeapons;
-
-    private Rigidbody rb;
-    private bool isGrounded;
-    private bool isJumping;
-    private bool iDown;
-    private bool fDown;
-    private bool runDown;
-    private bool isFireReady;
-    private bool isSwap;
+    // Player resources
+    public int ammo;       // Amount of ammo the player has
+    public int mineral;    // Amount of minerals the player has
+    public int life;       // Player's life points
+    public int fuel;
     
-    private bool ItemSwapDown1;
-    private bool ItemSwapDown2;
-    private bool ItemSwapDown3;
-    // item object
-    GameObject nearObject;
-    weapon equipWeapon;
 
-    float fireDelay;
-    Animator animator;
-    Vector3 moveVec3;
+    /**
+    * Speed-related variables
+    */
+    public float walkSpeed = 1f;   // Walking speed
+    public float runSpeed = 2f;   // Running speed
+    public float turnSpeed = 720f; // Turning speed (degrees per second)
+    public float jumpForce = 4f;   // Force applied when jumping
+    public float jumpMoveSpeed = 2f; // Movement speed while jumping
+    
+    /*********************************/
 
+    // Weapon management
+    public GameObject[] weapons;  // Array of weapon game objects
+    public bool[] hasWeapons;     // Array indicating which weapons the player possesses
+
+    // Private fields
+    private Rigidbody rb;            // Rigidbody component for physics calculations
+    private bool isGrounded;         // Whether the player is on the ground
+    private bool isJumping;          // Whether the player is currently jumping
+    private bool iDown;              // Input flag for interaction
+    private bool fDown;              // Input flag for firing
+    private bool runDown;            // Input flag for running
+    private bool isFireReady;        // Whether the weapon is ready to fire
+    private bool isSwap;             // Whether the player is swapping weapons
+    private bool ItemSwapDown1;      // Input flag for weapon swap slot 1
+    private bool ItemSwapDown2;      // Input flag for weapon swap slot 2
+    private bool ItemSwapDown3;      // Input flag for weapon swap slot 3
+    private bool isRifleEquip;
+    // Item object
+    GameObject nearObject;           // Reference to a nearby interactable object
+
+    // Other variables
+    float fireDelay;                 // Delay between firing
+    Animator animator;               // Animator component for handling animations
+    Vector3 moveVec3;                // Movement vector for player movement
+
+    // class instance
+
+    weapon equipWeapon;              // Currently equipped weapon
+
+
+/// <summary>
+/// functions 
+/// </summary>
+/// 
     void GetInput()
     {
         iDown = Input.GetButtonDown("Interaction");
@@ -43,9 +67,9 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        //rb = GetComponent<Rigidbody>();
-        //rb.useGravity = true;
-        //rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z�� ȸ�� ����
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = true;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // X, Z�� ȸ�� ����
     }
 
     void Awake()
@@ -60,11 +84,17 @@ public class PlayerController : MonoBehaviour
         Attack();
         Interaction();
         ItemSwap();
-        //UpdateAnimator();
+        UpdateAnimator();
     }
 
     void MovePlayer()
     {
+        if (rb == null || animator == null)
+        {
+            Debug.LogError("Rigidbody 또는 Animator가 할당되지 않았습니다.");
+            return;
+        }
+
         if (!isGrounded) { 
             if (isJumping){
                 Debug.Log("moving while jumping");
@@ -72,6 +102,8 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("not grounded"); return ;
             }
         }
+
+        animator.SetBool("Grounded", true);
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
@@ -83,11 +115,29 @@ public class PlayerController : MonoBehaviour
 
         float currentMoveSpeed = isGrounded ? jumpMoveSpeed : walkSpeed;
 
+        if (moveVec3 == Vector3.zero){
+            animator.SetFloat("Speed", 0f);
+            animator.SetFloat("MotionSpeed", 0f);
+        }
+
         if (moveVec3 != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveVec3);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             rb.MovePosition(transform.position + moveVec3 * currentMoveSpeed * Time.deltaTime);
+            /**
+            Idle: Speed = 0
+            Walk_N: Speed = 0.1 ~ 0.5
+            Run_N: Speed = 0.5 이상
+            */
+            if(!runDown){
+                animator.SetFloat("Speed", 0.3f);
+                animator.SetFloat("MotionSpeed", 10f);
+            } else {
+                animator.SetFloat("Speed", 2f);
+                animator.SetFloat("MotionSpeed", 10f);
+            }
+            
         }
     }
 
@@ -98,26 +148,34 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false; 
             isJumping = true;
+            animator.SetBool("Jump", true);
+        } else {
+            animator.SetBool("Jump", false);
         }
     }
 
-    void Attack(){
-        if (equipWeapon == null){
-            return;
-        }
+void Attack(){
+    if (equipWeapon == null){
+        return;
+    }
 
-        fireDelay += Time.deltaTime;
-        isFireReady = equipWeapon.rate < fireDelay;
+    fireDelay += Time.deltaTime;
+    isFireReady = equipWeapon.rate < fireDelay;
 
-        if (fDown && isFireReady && !isSwap){
-            equipWeapon.Use();
+    if (fDown && isFireReady && !isSwap){
+        equipWeapon.Use();
+        if (equipWeapon.weapontype == weapon.weaponType.Melee) {
             animator.SetTrigger("doSwing");
-            fireDelay = 0;
+        } else {
+            animator.SetTrigger("doShot");
         }
+        fireDelay = 0;
     }
+}
+
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("wall"))
         {
             isGrounded = true; // �ٴ��̳� ���� ��� ������ �ٴڿ� �ִ� ���·� ����
             isJumping = false;
@@ -126,7 +184,7 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("wall"))
         {
             isGrounded = false; // �ٴ��̳� ������ ����� �ٴڿ� ���� ���� ���·� ����
         }
@@ -137,14 +195,12 @@ public class PlayerController : MonoBehaviour
         Debug.Log("footStep");
     }
 
-/*
+
     void UpdateAnimator()
     {
-        isJumping = false;
-        float speed = moveVec3.magnitude * (isGrounded ? moveSpeed : jumpMoveSpeed);
-        animator.SetFloat("Speed", speed);
+        animator.SetBool("isRifleEquip", isRifleEquip);
     }
-*/
+
 
     void ItemSwap()
     {
@@ -165,12 +221,15 @@ public class PlayerController : MonoBehaviour
                     {
                         equipWeapon.gameObject.SetActive(false);
                         equipWeapon = null;
+                        isRifleEquip = false;
                     }
                     else
                     {
                         equipWeapon.gameObject.SetActive(false);
                         equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
                         equipWeapon.gameObject.SetActive(true);
+                        isRifleEquip = true;
+
                     }
                 }
                 else
@@ -178,6 +237,7 @@ public class PlayerController : MonoBehaviour
                     // Equip new weapon if none is currently equipped
                     equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
                     equipWeapon.gameObject.SetActive(true);
+                    isRifleEquip = true;
                 }
             }
         }
@@ -195,6 +255,26 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    void OnTriggerEnter(Collider other){
+        if(other.tag == "item" ){
+            Item item = other.GetComponent<Item>();
+            switch(item.itemtype){
+                case Item.ItemType.Ammo:
+                ammo += item.num;
+                    break;
+                case Item.ItemType.life:
+                life += item.num;
+                    break;
+                case Item.ItemType.fuel:
+                fuel += item.num;
+                    break;
+            }
+            Destroy(other.gameObject);
+        }
+    }
+
+
     void OnTriggerStay(Collider other){
         if(other.tag == "weapon"){
             nearObject = other.gameObject;

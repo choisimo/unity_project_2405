@@ -12,6 +12,8 @@ public class Item : MonoBehaviour
     public ItemType itemtype;
     public int itemIndex;
     public string itemName;
+    public int num;
+    
     void Update()
     {
         transform.Rotate(Vector3.up * 20 * Time.deltaTime);
