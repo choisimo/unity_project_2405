@@ -5,23 +5,25 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     public int fuel = 0;
-    private PlayerController1 player;
+    private userController player;
     private Rigidbody rb;
     private bool isDriving;
+    private bool isInTrain;
 
     void Start()
     {
-        player = GameObject.FindObjectOfType<PlayerController1>();
+        player = GameObject.FindObjectOfType<userController>();
         fuel = player.fuel;
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         isDriving = false;
+        isInTrain = false;
     }
+
     void Update()
     {
-        if (isDriving)
+        if (isDriving && !isInTrain)
         {
-            // Add vehicle control logic here
             float move = Input.GetAxis("Vertical") * 10f * Time.deltaTime;
             float turn = Input.GetAxis("Horizontal") * 50f * Time.deltaTime;
 
@@ -39,9 +41,10 @@ public class CarController : MonoBehaviour
         }
     }
 
-    public void SetDriving(bool driving)
+    public void SetDriving(bool driving, bool inTrain = false)
     {
         isDriving = driving;
+        isInTrain = inTrain;
         rb.isKinematic = !driving; 
     }
 }

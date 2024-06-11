@@ -32,6 +32,7 @@ public class Train : MonoBehaviour
     //기차 짐칸
     public GameObject[] Wagon;
 
+    private bool isControlled = false;
     void Start()
     {
         rig = GetComponent<Rigidbody>();
@@ -102,5 +103,10 @@ public class Train : MonoBehaviour
                 TrainLight.SetActive(false);
         }
     }
+    
+    public void SetControl(bool control)
+    {
+        isControlled = control;
+    } 
 
 }
