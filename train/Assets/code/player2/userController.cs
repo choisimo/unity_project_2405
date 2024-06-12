@@ -145,11 +145,11 @@ public class userController : MonoBehaviour
             }
             else if (runDown)
             {
-                currentMoveSpeed = 20f;
+                currentMoveSpeed = 10f;
             }
             else
             {
-                currentMoveSpeed = 10f;
+                currentMoveSpeed = 5f;
             }
 
             Debug.Log($"Current move speed: {currentMoveSpeed}");

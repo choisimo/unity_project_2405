@@ -38,10 +38,22 @@ public class Enemy : MonoBehaviour
 
     void updateAnim()
     {
-        if (_navgate.velocity.magnitude > 0.1f)
+        isWalk1 = _navgate.velocity.magnitude > 0.1f;
+        if (isWalk1)
         {
-            animator.SetBool("Walk_Cycle_1", isWalk1);
+            int randomWalkCycle = Random.Range(1, 4); // 1에서 3 사이의 랜덤 정수 생성
+            animator.SetBool("Walk_Cycle_1", randomWalkCycle == 1);
+            animator.SetBool("Walk_Cycle_2", randomWalkCycle == 2);
+            animator.SetBool("Walk_Cycle_3", randomWalkCycle == 3);
+            Debug.Log("Selected Walk Cycle: Walk_Cycle_" + randomWalkCycle);
         }
+        else
+        {
+            animator.SetBool("Walk_Cycle_1", false);
+            animator.SetBool("Walk_Cycle_2", false);
+            animator.SetBool("Walk_Cycle_3", false);
+        }
+
         animator.SetBool("Die", isDead);
         animator.SetBool("Take_Damage_1", takeDamage);
         animator.SetBool("Attack_1", isAttack);
