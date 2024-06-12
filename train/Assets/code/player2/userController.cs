@@ -390,11 +390,13 @@ public class userController : MonoBehaviour
                     Debug.Log("near object tag is TRAIN");
                     if (isDriving)
                     {
+                        Debug.Log("exit car");
                         ExitCar();
                     }
                     else
                     {
-                        EnterCar(nearObject);
+                        Debug.Log("enter car");
+                        EnterCar();
                     }
                 } 
                 
@@ -405,25 +407,6 @@ public class userController : MonoBehaviour
             }
         }
         
-        void OnTriggerEnter(Collider other)
-        {    
-            /*
-            if (other.tag == "item")
-            {
-                Item item = other.GetComponent<Item>();
-                InventoryItem inventoryItem = new InventoryItem
-                {
-                    itemName = item.itemName,
-                    itemIcon = item.itemIcon
-                };
-
-                inventoryManager.AddItem(inventoryItem);
-
-                Destroy(other.gameObject);
-            }
-            */
-        }
-
         IEnumerator OnDamange()
         {
             isOnDamage = true;
@@ -480,23 +463,26 @@ public class userController : MonoBehaviour
          */
         
         
-        void EnterCar(GameObject vehicle)
+        public void EnterCar()
         {
-            Debug.Log("enter car");
-            this.vehicle = vehicle;
+            Debug.Log("enter car"); 
             isDriving = true;
             vehicle.GetComponent<CarController>().SetDriving(true);
             gameObject.SetActive(false);
 
         }
 
-        void ExitCar()
+        public void ExitCar()
         {
             Debug.Log("exit car");
             isDriving = false;
-            vehicle.GetComponent<CarController>().SetDriving(false);
+            if (vehicle != null)
+            {
+                vehicle.GetComponent<CarController>().SetDriving(false);
+            }
             gameObject.SetActive(true);
             transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 차량 근처에 위치시키기
+            Debug.Log("player exited the car and is now at position : " + transform.position);
         
     }
 }

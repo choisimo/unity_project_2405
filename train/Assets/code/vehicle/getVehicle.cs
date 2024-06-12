@@ -37,10 +37,12 @@ public class getVehicle : MonoBehaviour
         {
             if (playerController.isDriving)
             {
+                Debug.Log("Trying to exit vehicle");
                 ExitVehicle();
             }
             else if (playerController.nearObject == this.gameObject)
             {
+                Debug.Log("Trying to enter vehicle");
                 EnterVehicle();
             }
         }
@@ -48,6 +50,7 @@ public class getVehicle : MonoBehaviour
     
     void EnterVehicle()
     {
+        Debug.Log("enter car");
         if (carController != null)
         {
             carController.SetDriving(true);
@@ -59,10 +62,12 @@ public class getVehicle : MonoBehaviour
             if (carController != null) carController.SetDriving(false);
         }
         playerController.isDriving = true;
+        playerController.EnterCar();
     }
 
     void ExitVehicle()
     {
+        Debug.Log("exit car");
         if (carController != null)
         {
             carController.SetDriving(false);
@@ -72,6 +77,7 @@ public class getVehicle : MonoBehaviour
             trainController.SetControl(false);
         }
         playerController.isDriving = false;
+        playerController.ExitCar();
     }
 
 

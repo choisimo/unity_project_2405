@@ -23,9 +23,7 @@ public class Enemy : MonoBehaviour
 
     NavMeshAgent _navgate;
 
-    /**
-      animator boolean settings
-      */
+    // Animator boolean settings
     private bool isWalk1;
     private bool isDead;
     private bool takeDamage;
@@ -34,6 +32,9 @@ public class Enemy : MonoBehaviour
     public int attackDamage = 10;
     public float attackRange = 2.0f;
     public float attackRate = 1.0f;
+    private float nextAttackTime;
+
+
 
     void updateAnim()
     {
@@ -54,15 +55,6 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("_navgate is not null");
         }
-        StartCoroutine(AttackRoutine());  // AttackRoutine 코루틴 시작
-    }
-
-    private void Awake()
-    {
-        _rigid = GetComponent<Rigidbody>();
-        _capsuleCollider = GetComponent<CapsuleCollider>();
-        _mat = GetComponent<MeshRenderer>().material;
-
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
@@ -74,6 +66,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        _rigid = GetComponent<Rigidbody>();
+        _capsuleCollider = GetComponent<CapsuleCollider>();
+        _mat = GetComponent<MeshRenderer>().material;
+    }
+
     private void Update()
     {
         if (isDead)
@@ -83,7 +82,19 @@ public class Enemy : MonoBehaviour
 
         if (attackTarget != null && currentHealth > 0)
         {
-            _navgate.SetDestination(attackTarget.position);
+            float distanceToPlayer = Vector3.Distance(attackTarget.position, transform.position);
+            if (distanceToPlayer <= attackRange)
+            {
+                if (Time.time >= nextAttackTime)
+                {
+                    Attack();
+                    nextAttackTime = Time.time + 1f / attackRate;
+                }
+            }
+            else
+            {
+                _navgate.SetDestination(attackTarget.position);
+            }
             updateAnim();
         }
         else if (currentHealth > 0)
@@ -107,12 +118,15 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Bullet"))
         {
             Ammo bullet = other.GetComponent<Ammo>();
-            currentHealth -= bullet.damage;
-            Vector3 reactVec = transform.position - other.transform.position;
-            StartCoroutine(OnDamage(reactVec));
-            takeDamage = true;
+            if (bullet != null)
+            {
+                currentHealth -= bullet.damage;
+                Vector3 reactVec = transform.position - other.transform.position;
+                StartCoroutine(OnDamage(reactVec));
+                takeDamage = true;
+            }
+            takeDamage = false;
         }
-        takeDamage = false;
     }
 
     private void OnTriggerExit(Collider other)
@@ -149,20 +163,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private IEnumerator AttackRoutine()
-    {
-        while (!isDead)
-        {
-            if (isPlayerInRange)
-            {
-                Attack();
-            }
-
-            isAttack = false;
-            yield return new WaitForSeconds(attackRate);
-        }
-    }
-
     private void Attack()
     {
         if (attackTarget != null)
@@ -174,7 +174,15 @@ public class Enemy : MonoBehaviour
                 player.TakeDamange(attackDamage);
                 isAttack = true;
                 updateAnim();
+                StartCoroutine(ResetAttackTrigger());
             }
         }
+    }
+
+    private IEnumerator ResetAttackTrigger()
+    {
+        yield return new WaitForSeconds(0.1f);
+        isAttack = false;
+        updateAnim();
     }
 }

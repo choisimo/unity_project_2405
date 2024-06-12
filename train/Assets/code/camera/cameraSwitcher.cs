@@ -12,10 +12,10 @@ public class CameraSwitcher : MonoBehaviour
     
     void Start()
     {
-        mainCamera.enabled = true;
+        mainCamera.enabled = false;
         secondaryCamera.enabled = false;
         trainCamera.enabled = false;
-        userCamera.enabled = false;
+        userCamera.enabled = true;
     }
 
     void Update()
