@@ -50,6 +50,7 @@ public class CameraSwitcher : MonoBehaviour
         mainCamera.enabled = true;
         userCamera.enabled = false;
         secondaryCamera.enabled = false;
+        trainCamera.enabled = false;
     }
 
     void SwitchToSecondaryCamera()
@@ -57,6 +58,7 @@ public class CameraSwitcher : MonoBehaviour
         mainCamera.enabled = false;
         userCamera.enabled = false;
         secondaryCamera.enabled = true;
+        trainCamera.enabled = false;
     }
 
     void SwitchToThirdCamera()
@@ -64,5 +66,15 @@ public class CameraSwitcher : MonoBehaviour
         mainCamera.enabled = false;
         secondaryCamera.enabled = false;
         userCamera.enabled = true;
+        trainCamera.enabled = false;
     }
+
+    public void SwitchToTrainCamera()
+    {
+        mainCamera.enabled = false;
+        secondaryCamera.enabled = false;
+        userCamera.enabled = false;
+        trainCamera.enabled = true;
+    }
+
 }

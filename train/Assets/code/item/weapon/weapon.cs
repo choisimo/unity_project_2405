@@ -10,7 +10,7 @@ public class weapon : MonoBehaviour
     public weaponType weapontype;
     public int damage;
     public float rate;
-    public BoxCollider meleeArea;
+    //public BoxCollider meleeArea;
     public Transform ammoPos;
     public Transform ammoCasePos;
     public GameObject ammo;
@@ -42,10 +42,12 @@ public class weapon : MonoBehaviour
 
     IEnumerator Swing()
     {
-        yield return new WaitForSeconds(0.1f);
+        /*yield return new WaitForSeconds(0.1f);
         meleeArea.enabled = true;
         trailEffect.enabled = true;
-        isFiring = false;
+        isFiring = false;*/
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("IS SWINGING");
     }
 
     IEnumerator Shot()

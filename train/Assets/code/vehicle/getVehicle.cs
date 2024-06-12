@@ -33,19 +33,46 @@ public class getVehicle : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && playerController.nearObject == this.gameObject)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (carController != null)
+            if (playerController.isDriving)
             {
-                carController.SetDriving(true);
-                trainController.SetControl(false);
+                ExitVehicle();
             }
-            else if (trainController != null)
+            else if (playerController.nearObject == this.gameObject)
             {
-                trainController.SetControl(true);
-                carController.SetDriving(false);
+                EnterVehicle();
             }
         }
     }
+    
+    void EnterVehicle()
+    {
+        if (carController != null)
+        {
+            carController.SetDriving(true);
+            if (trainController != null) trainController.SetControl(false);
+        }
+        else if (trainController != null)
+        {
+            trainController.SetControl(true);
+            if (carController != null) carController.SetDriving(false);
+        }
+        playerController.isDriving = true;
+    }
+
+    void ExitVehicle()
+    {
+        if (carController != null)
+        {
+            carController.SetDriving(false);
+        }
+        if (trainController != null)
+        {
+            trainController.SetControl(false);
+        }
+        playerController.isDriving = false;
+    }
+
 
 }

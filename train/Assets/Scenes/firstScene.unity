@@ -1207,6 +1207,7 @@ GameObject:
   - component: {fileID: 728240274}
   - component: {fileID: 728240276}
   - component: {fileID: 728240275}
+  - component: {fileID: 728240277}
   m_Layer: 0
   m_Name: trainCamera
   m_TagString: Untagged
@@ -1288,6 +1289,20 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &728240277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728240273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5f357f113a151e4faa327b409d883a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetPlayer: {fileID: 1310771328}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1001 &741100560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2406,7 +2421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9a66496780cdc41a22cbd1f69cdef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemtype: 0
+  itemtype: 4
   itemIndex: 0
   itemName: assult
   num: 0
@@ -2754,6 +2769,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fuel: 0
+--- !u!4 &1310771328 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6323673343698721858, guid: fafc3cad626055d4aba3c50f2fa0197f, type: 3}
+  m_PrefabInstance: {fileID: 2243602503518046758}
+  m_PrefabAsset: {fileID: 0}
 --- !u!65 &1310771329
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3289,7 +3309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9a66496780cdc41a22cbd1f69cdef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemtype: 0
+  itemtype: 4
   itemIndex: 1
   itemName: pistol
   num: 0

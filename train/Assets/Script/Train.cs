@@ -33,6 +33,7 @@ public class Train : MonoBehaviour
     public GameObject[] Wagon;
 
     private bool isControlled = false;
+    private CameraSwitcher _cameraSwitcher;
     void Start()
     {
         rig = GetComponent<Rigidbody>();
@@ -107,6 +108,10 @@ public class Train : MonoBehaviour
     public void SetControl(bool control)
     {
         isControlled = control;
+        if (control && _cameraSwitcher != null)
+        {
+            _cameraSwitcher.SwitchToTrainCamera();
+        }
     } 
 
 }

@@ -43,7 +43,7 @@ public class userController : MonoBehaviour
         public GameObject player;
         private GameObject vehicle;
         public Camera vehicleCamera;
-        private bool isDriving;
+        public bool isDriving;
         
         // Private fields
         private Rigidbody rb;            // Rigidbody component for physics calculations
