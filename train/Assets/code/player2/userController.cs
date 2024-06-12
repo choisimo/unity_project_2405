@@ -62,6 +62,7 @@ public class userController : MonoBehaviour
         private bool isWeaponPistol;
         private bool isOnDamage;
         private bool isDead;
+        private bool isStunned;
         // Item object
 
         // Other variables
@@ -87,7 +88,7 @@ public class userController : MonoBehaviour
         {
             iDown = Input.GetButtonDown("Interaction");
             fDown = Input.GetButtonDown("Fire1");
-            runDown = Input.GetButtonDown("Run"); //running active
+            runDown = Input.GetKey(KeyCode.LeftShift); // Shift key for running
             ItemSwapDown1 = Input.GetButtonDown("ItemSwap1");
             ItemSwapDown2 = Input.GetButtonDown("ItemSwap2");
             ItemSwapDown3 = Input.GetButtonDown("ItemSwap3");
@@ -123,6 +124,11 @@ public class userController : MonoBehaviour
 
         void MovePlayer()
         {
+            if (isStunned)
+            {
+                animator.SetFloat("Speed", 0f);
+                return;
+            }
             
             if (rb == null || animator == null)
             {
@@ -438,7 +444,6 @@ public class userController : MonoBehaviour
 
         public void TakeDamange(int damage)
         {
-            
             if (currentHealth <= 0)
             {
                 Debug.Log("남은 목숨이 없어 사망하였습니다.");
@@ -449,20 +454,10 @@ public class userController : MonoBehaviour
             rb.isKinematic = true;
             StartCoroutine(ResetKinematic());
             uiManager.UpdateHealthUI();
-        }
-
-        IEnumerator ResetKinematic()
-        {
-            yield return new WaitForSeconds(1f);
-            rb.isKinematic = false;
-            isOnDamage = false;
+            StartCoroutine(StunPlayer(1.0f));
         }
         
-        /*
-         * car interaction
-         */
-        
-        
+    
         public void EnterCar()
         {
             Debug.Log("enter car"); 
@@ -483,6 +478,20 @@ public class userController : MonoBehaviour
             gameObject.SetActive(true);
             transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 차량 근처에 위치시키기
             Debug.Log("player exited the car and is now at position : " + transform.position);
-        
     }
+        
+        IEnumerator StunPlayer(float duration)
+        {
+            isStunned = true;
+            yield return new WaitForSeconds(duration);
+            isStunned = false;
+        }
+        
+        IEnumerator ResetKinematic()
+        {
+            yield return new WaitForSeconds(1f);
+            rb.isKinematic = false;
+            isOnDamage = false;
+        }
+
 }

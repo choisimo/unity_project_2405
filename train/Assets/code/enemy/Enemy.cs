@@ -53,10 +53,24 @@ public class Enemy : MonoBehaviour
             animator.SetBool("Walk_Cycle_2", false);
             animator.SetBool("Walk_Cycle_3", false);
         }
-
+        
         animator.SetBool("Die", isDead);
         animator.SetBool("Take_Damage_1", takeDamage);
-        animator.SetBool("Attack_1", isAttack);
+
+        if (isAttack)
+        {
+            int randomAttackCycle = Random.Range(1, 4);
+            animator.SetBool("Attack_1", randomAttackCycle == 1);
+            animator.SetBool("Attack_2", randomAttackCycle == 2);
+            animator.SetBool("Attack_3", randomAttackCycle == 3);
+        }
+        else
+        {
+            animator.SetBool("Attack_1", false);
+            animator.SetBool("Attack_2", false);
+            animator.SetBool("Attack_3", false);
+        }
+        
     }
 
     private void Start()
@@ -182,9 +196,9 @@ public class Enemy : MonoBehaviour
             userController player = attackTarget.GetComponent<userController>();
             if (player != null)
             {
+                isAttack = true;
                 Debug.Log("Attack player!");
                 player.TakeDamange(attackDamage);
-                isAttack = true;
                 updateAnim();
                 StartCoroutine(ResetAttackTrigger());
             }
