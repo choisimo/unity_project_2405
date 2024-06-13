@@ -45,6 +45,7 @@ public class userController : MonoBehaviour
         public Camera vehicleCamera;
         public bool isDriving;
         
+        
         // Private fields
         private Rigidbody rb;            // Rigidbody component for physics calculations
         private bool isGrounded;         // Whether the player is on the ground
