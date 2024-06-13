@@ -9,206 +9,157 @@ using Random = UnityEngine.Random;
 
 
 public class Enemy : MonoBehaviour
-{
-    public int maxHealth;
-    public int currentHealth;
-    private bool isPlayerInRange;
-
-    public Transform attackTarget;
-    public Animator animator;
-
-    private Rigidbody _rigid;
-    private CapsuleCollider _capsuleCollider;
-    private Material _mat;
-
-    NavMeshAgent _navgate;
-
-    // Animator boolean settings
-    private bool isWalk1;
-    private bool isDead;
-    private bool takeDamage;
-    private bool isAttack;
-
-    public int attackDamage = 10;
-    public float attackRange = 2.0f;
-    public float attackRate = 1.0f;
-    private float nextAttackTime;
-
-
-
-    void updateAnim()
     {
-        isWalk1 = _navgate.velocity.magnitude > 0.1f;
-        if (isWalk1)
-        {
-            int randomWalkCycle = Random.Range(1, 4); // 1에서 3 사이의 랜덤 정수 생성
-            animator.SetBool("Walk_Cycle_1", randomWalkCycle == 1);
-            animator.SetBool("Walk_Cycle_2", randomWalkCycle == 2);
-            animator.SetBool("Walk_Cycle_3", randomWalkCycle == 3);
-            Debug.Log("Selected Walk Cycle: Walk_Cycle_" + randomWalkCycle);
-        }
-        else
-        {
-            animator.SetBool("Walk_Cycle_1", false);
-            animator.SetBool("Walk_Cycle_2", false);
-            animator.SetBool("Walk_Cycle_3", false);
-        }
+        public int maxHealth;
+        public int currentHealth;
+        public Transform attackTarget;
+        public Animator animator;
         
-        animator.SetBool("Die", isDead);
-        animator.SetBool("Take_Damage_1", takeDamage);
+        private Rigidbody _rigid;
+        private CapsuleCollider _capsuleCollider;
+        private Material _mat;
+        NavMeshAgent _navgate;
 
-        if (isAttack)
-        {
-            int randomAttackCycle = Random.Range(1, 4);
-            animator.SetBool("Attack_1", randomAttackCycle == 1);
-            animator.SetBool("Attack_2", randomAttackCycle == 2);
-            animator.SetBool("Attack_3", randomAttackCycle == 3);
-        }
-        else
-        {
-            animator.SetBool("Attack_1", false);
-            animator.SetBool("Attack_2", false);
-            animator.SetBool("Attack_3", false);
-        }
-        
-    }
+        /**
+          animator boolean settings
+          */
+        private bool isWalk1;
+        private bool isDead;
+        private bool takeDamage;
+        private bool isAttack;
 
-    private void Start()
-    {
-        animator = GetComponentInChildren<Animator>();
-        _navgate = GetComponent<NavMeshAgent>();
-        if (_navgate)
-        {
-            Debug.Log("_navgate is not null");
-        }
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
-        {
-            attackTarget = player.transform;
-        }
-        else
-        {
-            Debug.LogError("Player not found. Ensure the player has the tag 'Player'.");
-        }
-    }
+        public int attackDamange = 10;
+        public float attackRange = 2.0f;
+        public float attackRate = 1.0f;
 
-    private void Awake()
-    {
-        _rigid = GetComponent<Rigidbody>();
-        _capsuleCollider = GetComponent<CapsuleCollider>();
-        _mat = GetComponent<MeshRenderer>().material;
-    }
-
-    private void Update()
-    {
-        if (isDead)
+        void updateAnim()
         {
-            return;
-        }
-
-        if (attackTarget != null && currentHealth > 0)
-        {
-            float distanceToPlayer = Vector3.Distance(attackTarget.position, transform.position);
-            if (distanceToPlayer <= attackRange)
+            if (_navgate.velocity.magnitude > 0.1f)
             {
-                if (Time.time >= nextAttackTime)
-                {
-                    Attack();
-                    nextAttackTime = Time.time + 1f / attackRate;
-                }
+                animator.SetBool("Walk_Cycle_1", isWalk1);   
             }
-            else
+            animator.SetBool("Die", isDead);
+            animator.SetBool("Take_Damage_1", takeDamage);
+            animator.SetBool("Attack_1", isAttack);
+        }
+        
+        private void Start()
+        {
+            animator = GetComponentInChildren<Animator>();
+            _navgate = GetComponent<NavMeshAgent>();
+            if (_navgate)
+            {
+                Debug.Log("_navgate is not null");   
+            }
+            StartCoroutine(AttackRoutine());  // AttackRoutine 코루틴 시작
+        }
+
+        private void Awake()
+        {
+            _rigid = GetComponent<Rigidbody>();
+            _capsuleCollider = GetComponent<CapsuleCollider>();
+            _mat = GetComponent<MeshRenderer>().material;
+        }
+
+        private void Update()
+        {
+            if (isDead)
+            {
+                return;
+            }
+
+            if (attackTarget != null && currentHealth > 0)
             {
                 _navgate.SetDestination(attackTarget.position);
+                updateAnim();
             }
-            updateAnim();
-        }
-        else if (currentHealth > 0)
-        {
-            Debug.LogError("attackTarget이 할당되지 않았습니다.");
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (isDead)
-        {
-            return;
-        }
-
-        if (other.CompareTag("Player"))
-        {
-            isPlayerInRange = true;
-        }
-
-        if (other.CompareTag("Bullet"))
-        {
-            Ammo bullet = other.GetComponent<Ammo>();
-            if (bullet != null)
+            else if (currentHealth > 0)
             {
+                Debug.LogError("attackTarget이 할당되지 않았습니다.");
+            }
+
+        }
+
+        void OnTriggerEnter(Collider other)
+        {       
+            if (isDead)
+            {
+                return;
+            }
+            
+            /*
+            if (other.tag.Equals("Melee"))
+            {
+                weapon weapon = other.GetComponent<weapon>();
+                currentHealth -= weapon.damage;
+                Vector3 reactVec = transform.position - other.transform.position;
+                StartCoroutine(OnDamange(reactVec));
+                takeDamage = true;
+            }
+            else 
+            */ 
+            if (other.tag.Equals("Bullet"))
+            {
+                Ammo bullet = other.GetComponent<Ammo>();
                 currentHealth -= bullet.damage;
                 Vector3 reactVec = transform.position - other.transform.position;
-                StartCoroutine(OnDamage(reactVec));
+                StartCoroutine(OnDamange(reactVec));
                 takeDamage = true;
             }
             takeDamage = false;
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        IEnumerator OnDamange(Vector3 reactVec)
         {
-            isPlayerInRange = false;
-        }
-    }
+            _mat.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
 
-    private IEnumerator OnDamage(Vector3 reactVec)
-    {
-        _mat.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-
-        if (currentHealth > 0)
-        {
-            _mat.color = Color.white;
-        }
-        else
-        {
-            _mat.color = Color.yellow;
-            isDead = true;
-            _navgate.isStopped = true;
-            _navgate.enabled = false;
-            updateAnim();
-            gameObject.layer = 10;
-
-            reactVec = reactVec.normalized;
-            reactVec += Vector3.up;
-            _rigid.AddForce(reactVec * 2, ForceMode.Impulse);
-
-            Destroy(gameObject, 10);
-        }
-    }
-
-    private void Attack()
-    {
-        if (attackTarget != null)
-        {
-            userController player = attackTarget.GetComponent<userController>();
-            if (player != null)
+            if (currentHealth > 0)
             {
-                isAttack = true;
-                Debug.Log("Attack player!");
-                player.TakeDamange(attackDamage);
+                _mat.color = Color.white;
+            }
+            else
+            {
+                _mat.color = Color.yellow;
+                isDead = true;
+                _navgate.isStopped = true;
+                _navgate.enabled = false;
                 updateAnim();
-                StartCoroutine(ResetAttackTrigger());
+                gameObject.layer = 10;
+
+                reactVec = reactVec.normalized;
+                reactVec += Vector3.up;
+                _rigid.AddForce(reactVec * 2, ForceMode.Impulse);
+
+                Destroy(gameObject, 10);
+            }
+        }
+
+        IEnumerator AttackRoutine()
+        {
+            while (!isDead)
+            {
+                if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.position) <= attackRange)
+                {
+                    Attack();
+                }
+
+                isAttack = false;
+                yield return new WaitForSeconds(attackRate);
+            }
+        }
+
+        void Attack()
+        {
+            if (attackTarget != null)
+            {
+                PlayerController1 player = attackTarget.GetComponent<PlayerController1>();
+                if (player != null)
+                {
+                    Debug.Log("Attack player !");
+                    player.TakeDamange(attackDamange);
+                    isAttack = true;
+                }
             }
         }
     }
-
-    private IEnumerator ResetAttackTrigger()
-    {
-        yield return new WaitForSeconds(0.1f);
-        isAttack = false;
-        updateAnim();
-    }
-}

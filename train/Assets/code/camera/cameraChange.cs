@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
 
-public class cameraSwitcher : MonoBehaviour
+public class CameraSwitcher : MonoBehaviour
 {
     public Camera mainCamera;
     public Camera secondaryCamera;
@@ -12,10 +12,10 @@ public class cameraSwitcher : MonoBehaviour
     
     void Start()
     {
-        mainCamera.enabled = false;
+        mainCamera.enabled = true;
         secondaryCamera.enabled = false;
         trainCamera.enabled = false;
-        userCamera.enabled = true;
+        userCamera.enabled = false;
     }
 
     void Update()
@@ -50,7 +50,6 @@ public class cameraSwitcher : MonoBehaviour
         mainCamera.enabled = true;
         userCamera.enabled = false;
         secondaryCamera.enabled = false;
-        trainCamera.enabled = false;
     }
 
     void SwitchToSecondaryCamera()
@@ -58,7 +57,6 @@ public class cameraSwitcher : MonoBehaviour
         mainCamera.enabled = false;
         userCamera.enabled = false;
         secondaryCamera.enabled = true;
-        trainCamera.enabled = false;
     }
 
     void SwitchToThirdCamera()
@@ -66,15 +64,5 @@ public class cameraSwitcher : MonoBehaviour
         mainCamera.enabled = false;
         secondaryCamera.enabled = false;
         userCamera.enabled = true;
-        trainCamera.enabled = false;
     }
-
-    public void SwitchToTrainCamera()
-    {
-        mainCamera.enabled = false;
-        secondaryCamera.enabled = false;
-        userCamera.enabled = false;
-        trainCamera.enabled = true;
-    }
-
 }
