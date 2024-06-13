@@ -33,7 +33,7 @@ public class Train : MonoBehaviour
     public GameObject[] Wagon;
 
     private bool isControlled = false;
-    private CameraSwitcher _cameraSwitcher;
+    private cameraSwitcher _cameraSwitcher;
     void Start()
     {
         rig = GetComponent<Rigidbody>();

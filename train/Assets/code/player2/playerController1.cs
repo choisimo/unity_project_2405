@@ -1,27 +1,21 @@
-using System;
-using System.Collections;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
-using UnityEngine;
-using UnityEngine.Rendering.Universal;
+    using System;
+    using System.Collections;
+    using TMPro;
+    using Unity.VisualScripting;
+    using UnityEditor.PackageManager;
+    using UnityEngine;
+    using UnityEngine.Rendering.Universal;
 
-
-public class userController : MonoBehaviour
-{
-
+    public class PlayerController1 : MonoBehaviour
+    {
         // Player resources
         public int ammo;       // Amount of ammo the player has
         public int mineral;    // Amount of minerals the player has
-        [Header("최대 목숨")]
-        public int MaxHealth = 500;      
-        [Header("현재 목숨")]
+        public int MaxHealth = 500;       // Player's life points
         public int currentHealth = 500;
-        [Header("연료")]
         public int fuel;
-        [Header("킬 수")]
         public int killCount = 0;
-        [Header("UIManager")] public UIManager uiManager;
+        
 
         /**
         * Speed-related variables
@@ -41,9 +35,9 @@ public class userController : MonoBehaviour
         
         // vehicle management
         public GameObject player;
-        private GameObject vehicle;
+        public GameObject vehicle;
         public Camera vehicleCamera;
-        public bool isDriving;
+        private bool isDriving;
         
         // Private fields
         private Rigidbody rb;            // Rigidbody component for physics calculations
@@ -60,9 +54,8 @@ public class userController : MonoBehaviour
         private bool ItemSwapDown3;      // Input flag for weapon swap slot 3
         private bool isRifleEquip;
         private bool isWeaponPistol;
-        private bool isOnDamage;
+        private bool isOnDamange;
         private bool isDead;
-        private bool isStunned;
         // Item object
 
         // Other variables
@@ -88,7 +81,7 @@ public class userController : MonoBehaviour
         {
             iDown = Input.GetButtonDown("Interaction");
             fDown = Input.GetButtonDown("Fire1");
-            runDown = Input.GetKey(KeyCode.LeftShift); // Shift key for running
+            runDown = Input.GetButtonDown("Run"); //running active
             ItemSwapDown1 = Input.GetButtonDown("ItemSwap1");
             ItemSwapDown2 = Input.GetButtonDown("ItemSwap2");
             ItemSwapDown3 = Input.GetButtonDown("ItemSwap3");
@@ -124,11 +117,6 @@ public class userController : MonoBehaviour
 
         void MovePlayer()
         {
-            if (isStunned)
-            {
-                animator.SetFloat("Speed", 0f);
-                return;
-            }
             
             if (rb == null || animator == null)
             {
@@ -151,11 +139,11 @@ public class userController : MonoBehaviour
             }
             else if (runDown)
             {
-                currentMoveSpeed = 10f;
+                currentMoveSpeed = 20f;
             }
             else
             {
-                currentMoveSpeed = 5f;
+                currentMoveSpeed = 10f;
             }
 
             Debug.Log($"Current move speed: {currentMoveSpeed}");
@@ -299,74 +287,76 @@ public class userController : MonoBehaviour
             animator.SetBool("isJump", isJump);
             animator.SetBool("isJumpOnAir", isJumpOnAir);
             animator.SetBool("isWeaponPistol", isWeaponPistol);
-            animator.SetBool("isOnDamage", isOnDamage);
+            animator.SetBool("isOnDamage", isOnDamange);
             animator.SetBool("isDead", isDead);
         }
 
-void ItemSwap() 
-{
-    isSwap = true;
-    int weaponIndex = -1;
-    if (ItemSwapDown1) weaponIndex = 0;
-    if (ItemSwapDown2) weaponIndex = 1;
-    if (ItemSwapDown3) weaponIndex = 2;
 
-    if ((ItemSwapDown1 || ItemSwapDown2 || ItemSwapDown3) && !isJump)
-    {
-        if (weaponIndex >= 0 && weaponIndex < weapons.Length && hasWeapons[weaponIndex])
+        void ItemSwap() 
         {
-            if (weaponIndex == 2)
-            {
-                isWeaponPistol = true;
-            }
-            else
-            {
-                isWeaponPistol = false;
-            }
-            
-            if (equipWeapon != null)
-            {
-                // Toggle off if the same weapon is selected
-                if (equipWeapon == weapons[weaponIndex].GetComponent<weapon>())
-                {
-                    equipWeapon.gameObject.SetActive(false);
-                    equipWeapon.enabled = false; // 스크립트 비활성화
-                    equipWeapon = null;
-                    isRifleEquip = false;
-                    isSwap = false;
-                }
-                else
-                {
-                    equipWeapon.gameObject.SetActive(false);
-                    equipWeapon.enabled = false; // 스크립트 비활성화
-                    equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
-                    equipWeapon.gameObject.SetActive(true);
-                    equipWeapon.enabled = true; // 스크립트 활성화
-                    isRifleEquip = true;
-                    isSwap = false;
-                }
-            }
-            else
-            {
-                // Equip new weapon if none is currently equipped
-                equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
-                equipWeapon.gameObject.SetActive(true);
-                equipWeapon.enabled = true; // 스크립트 활성화
-                isRifleEquip = true;
-                isSwap = false;
-            }
-            
-            Item currentItem = weapons[weaponIndex].GetComponent<Item>();
-            if (currentItem != null && currentItem.itemName.Contains("pistol"))
-            {
-                Debug.Log("pistol을 장착하였습니다.");
-                isWeaponPistol = true;
-            }
-        }
-    }
-    isSwap = false;
-}
+            isSwap = true;
+            int weaponIndex = -1;
+            if (ItemSwapDown1) weaponIndex = 0;
+            if (ItemSwapDown2) weaponIndex = 1;
+            if (ItemSwapDown3) weaponIndex = 2;
 
+            if ((ItemSwapDown1 || ItemSwapDown2 || ItemSwapDown3) && !isJump)
+            {
+                if (weaponIndex >= 0 && hasWeapons[weaponIndex])
+                {
+                    if (weaponIndex == 2)
+                    {
+                        isWeaponPistol = true;
+                    }
+                    else
+                    {
+                        isWeaponPistol = false;
+                    }
+                    if (equipWeapon != null)
+                    {
+                        // Toggle off if the same weapon is selected
+                        if (equipWeapon == weapons[weaponIndex].GetComponent<weapon>())
+                        {
+                            equipWeapon.gameObject.SetActive(false);
+                            equipWeapon.enabled = false; // 스크립트 비활성화
+                            equipWeapon = null;
+                            isRifleEquip = false;
+                            isSwap = false;
+                        }
+                        else
+                        {
+                            equipWeapon.gameObject.SetActive(false);
+                            equipWeapon.enabled = false; // 스크립트 비활성화
+                            equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
+                            equipWeapon.gameObject.SetActive(true);
+                            equipWeapon.enabled = true; // 스크립트 활성화
+                            isRifleEquip = true;
+                            isSwap = false;
+                        }
+                    }
+                    else
+                    {
+                        // Equip new weapon if none is currently equipped
+                        equipWeapon = weapons[weaponIndex].GetComponent<weapon>();
+                        equipWeapon.gameObject.SetActive(true);
+                        equipWeapon.enabled = true; // 스크립트 활성화
+                        isRifleEquip = true;
+                        isSwap = false;
+                    }
+                    
+                    
+                    Item currentItem = weapons[weaponIndex].GetComponent<Item>();
+                    if (currentItem != null && currentItem.itemName.Contains("pistol"))
+                    {
+                        Debug.Log("pistol을 장착하였습니다.");
+                        isWeaponPistol = true;
+                    }
+
+                }
+            }
+
+            isSwap = false;
+        }
         void Interaction()
         {
             if(iDown && nearObject != null){
@@ -389,17 +379,14 @@ void ItemSwap()
                             Debug.LogError("nearObject 의 ItemType 이 weapon 이 아닙니다.");
                         }
                     }
-                } else if (nearObject.CompareTag("train"))
+                } else if (nearObject.CompareTag("vehicle"))
                 {
-                    Debug.Log("near object tag is TRAIN");
                     if (isDriving)
                     {
-                        Debug.Log("exit car");
                         ExitCar();
                     }
                     else
                     {
-                        Debug.Log("enter car");
                         EnterCar();
                     }
                 } 
@@ -411,11 +398,37 @@ void ItemSwap()
             }
         }
         
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "item")
+            {
+                Item item = other.GetComponent<Item>();
+                switch (item.itemtype)
+                {
+                    case Item.ItemType.Ammo:
+                        ammo += item.num;
+                        break;
+                    case Item.ItemType.life:
+                        currentHealth += item.num;
+                        break;
+                    case Item.ItemType.fuel:
+                        fuel += item.num;
+                        break;
+                }
+
+                Destroy(other.gameObject);
+            }
+            else if (other.tag == "enemyAttack")
+            {
+                
+            }
+        }
+
         IEnumerator OnDamange()
         {
-            isOnDamage = true;
+            isOnDamange = true;
             yield return new WaitForSeconds(1f);
-            isOnDamage = false;
+            isOnDamange = false;
         }
 
         void OnTriggerStay(Collider other){
@@ -442,54 +455,37 @@ void ItemSwap()
 
         public void TakeDamange(int damage)
         {
+            currentHealth -= damage;
+            isOnDamange = true;
             if (currentHealth <= 0)
             {
                 Debug.Log("남은 목숨이 없어 사망하였습니다.");
                 isDead = true;
             }
-            currentHealth -= damage;
-            isOnDamage = true;
-            rb.isKinematic = true;
-            StartCoroutine(ResetKinematic());
-            uiManager.UpdateHealthUI();
-            StartCoroutine(StunPlayer(1.0f));
         }
         
-    
-        public void EnterCar()
+        /*
+         * car interaction
+         */
+        
+        void EnterCar()
         {
-            Debug.Log("enter car"); 
             isDriving = true;
-            vehicle.GetComponent<CarController>().SetDriving(true);
-            gameObject.SetActive(false);
-
+            player.SetActive(false); // 플레이어 비활성화
+            //vehicle.GetComponent<CarController>().enabled = true; // 차량 제어 활성화
+           // playerCamera.enabled = false; // 플레이어 카메라 비활성화
+            //carCamera.enabled = true; // 차량 카메라 활성화
         }
 
-        public void ExitCar()
+        void ExitCar()
         {
-            Debug.Log("exit car");
             isDriving = false;
-            if (vehicle != null)
-            {
-                vehicle.GetComponent<CarController>().SetDriving(false);
-            }
-            gameObject.SetActive(true);
-            transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 차량 근처에 위치시키기
-            Debug.Log("player exited the car and is now at position : " + transform.position);
-    }
-        
-        IEnumerator StunPlayer(float duration)
-        {
-            isStunned = true;
-            yield return new WaitForSeconds(duration);
-            isStunned = false;
-        }
-        
-        IEnumerator ResetKinematic()
-        {
-            yield return new WaitForSeconds(1f);
-            rb.isKinematic = false;
-            isOnDamage = false;
-        }
+            player.SetActive(true); // 플레이어 활성화
+           // vehicle.GetComponent<CarController>().enabled = false; // 차량 제어 비활성화
+           // playerCamera.enabled = true; // 플레이어 카메라 활성화
+           // carCamera.enabled = false; // 차량 카메라 비활성화
 
-}
+            // 플레이어를 차량 근처로 이동
+            player.transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 예시 위치
+        }
+    }
