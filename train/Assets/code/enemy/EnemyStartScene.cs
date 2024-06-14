@@ -1,15 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using Random = UnityEngine.Random;
 
-
-public class Enemy : MonoBehaviour
-    {
+public class EnemyStartScene : MonoBehaviour
+{
         public int maxHealth;
         public int currentHealth;
         public Transform attackTarget;
@@ -18,7 +12,7 @@ public class Enemy : MonoBehaviour
         private Rigidbody _rigid;
         private CapsuleCollider _capsuleCollider;
         private Material _mat;
-        NavMeshAgent _navgate;
+        UnityEngine.AI.NavMeshAgent _navgate;
 
         /**
           animator boolean settings
@@ -46,7 +40,7 @@ public class Enemy : MonoBehaviour
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
-            _navgate = GetComponent<NavMeshAgent>();
+            _navgate = GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (_navgate)
             {
                 Debug.Log("_navgate is not null");   
@@ -75,7 +69,7 @@ public class Enemy : MonoBehaviour
             }
             else if (currentHealth > 0)
             {
-                Debug.LogError("attackTarget이 할당되지 않았습니다.");
+                
             }
 
         }
@@ -105,6 +99,8 @@ public class Enemy : MonoBehaviour
                 Vector3 reactVec = transform.position - other.transform.position;
                 StartCoroutine(OnDamange(reactVec));
                 takeDamage = true;
+                
+                SetAttackTarget(GameObject.FindWithTag("Player").transform);
             }
             takeDamage = false;
         }
@@ -167,6 +163,4 @@ public class Enemy : MonoBehaviour
         {
             attackTarget = target;
         }
-
-
-    }
+}
