@@ -1,14 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
+
 public class startSceneUserController : MonoBehaviour
 {
+    
+    public int ammo;       // Amount of ammo the player has
+    public int mineral;    // Amount of minerals the player has
+    [Header("최대 목숨")]
+    public int MaxHealth = 500;      
+    [Header("현재 목숨")]
+    public int currentHealth = 500;
+    [Header("연료")]
+    public int fuel;
+    [Header("킬 수")]
+    public int killCount = 0;
+    [Header("UIManager")] public UIManager uiManager;
+    
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float jumpForce = 10f;
     public Transform cameraTransform; // 카메라의 Transform을 참조
     public Image crosshair; // UI 조준점을 참조
+    public Transform aimPoint; // 조준점의 Transform을 참조
 
     private Rigidbody rb;
     private bool isGrounded;
@@ -35,7 +50,14 @@ public class startSceneUserController : MonoBehaviour
     private startSceneWeapon equipWeapon;              // Currently equipped weapon
     public Camera mainCamera;
     Animator animator;               // Animator component for handling animations
-
+    // Private fields
+    private bool isJump;          // Whether the player is currently jumping
+    private bool isJumpOnAir;
+    private bool iDown;              // Input flag for interaction
+    private bool runDown;            // Input flag for running
+    private bool isOnDamage;
+    private bool isDead;
+    private bool isStunned;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -107,6 +129,13 @@ public class startSceneUserController : MonoBehaviour
 
         // 플레이어의 몸체를 회전시킵니다.
         transform.localRotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        // aimPoint를 crosshair 위치로 업데이트
+        if (aimPoint != null)
+        {
+            Vector3 aimPointScreenPosition = new Vector3(Screen.width / 2, Screen.height / 2, mainCamera.nearClipPlane);
+            aimPoint.position = mainCamera.ScreenToWorldPoint(aimPointScreenPosition);
+        }
     }
 
     private void LateUpdate()
@@ -177,29 +206,6 @@ public class startSceneUserController : MonoBehaviour
         if (fDown && isFireReady && !isSwap)
         {   
             Debug.Log("start Attack");
-            
-            // mouse click position 
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            Vector3 targetPoint;
-            
-            if (Physics.Raycast(ray, out hit))
-            {
-                targetPoint = hit.point;
-            }
-            else
-            {
-                targetPoint = ray.GetPoint(100); // 마우스 클릭 위치가 없을 경우
-            }
-            
-            // 플레이어를 마우스 클릭 방향으로 회전
-            Vector3 direction = (targetPoint - transform.position).normalized;
-            direction.y = 0; // Y축 고정
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 720f);
-            }
             
             equipWeapon.Use();
             if (equipWeapon.weapontype == startSceneWeapon.weaponType.Melee) {
@@ -289,5 +295,34 @@ public class startSceneUserController : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
-
+    
+    
+    public void TakeDamange(int damage)
+    {
+        if (currentHealth <= 0)
+        {
+            Debug.Log("남은 목숨이 없어 사망하였습니다.");
+            isDead = true;
+        }
+        currentHealth -= damage;
+        isOnDamage = true;
+        rb.isKinematic = true;
+        StartCoroutine(ResetKinematic());
+        uiManager.UpdateHealthUI();
+        StartCoroutine(StunPlayer(1.0f));
+    }
+    
+    IEnumerator StunPlayer(float duration)
+    {
+        isStunned = true;
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
+    }
+        
+    IEnumerator ResetKinematic()
+    {
+        yield return new WaitForSeconds(1f);
+        rb.isKinematic = false;
+        isOnDamage = false;
+    }
 }

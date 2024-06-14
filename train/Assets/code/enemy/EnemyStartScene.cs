@@ -12,7 +12,7 @@ public class EnemyStartScene : MonoBehaviour
         private Rigidbody _rigid;
         private CapsuleCollider _capsuleCollider;
         private Material _mat;
-        UnityEngine.AI.NavMeshAgent _navgate;
+        public UnityEngine.AI.NavMeshAgent _navgate;
 
         /**
           animator boolean settings

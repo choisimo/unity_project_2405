@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class startSceneWeapon : MonoBehaviour
 {
     public enum weaponType { Melee, Range };
@@ -16,10 +17,7 @@ public class startSceneWeapon : MonoBehaviour
     public TrailRenderer trailEffect;
     public Transform character;
     public Camera mainCamera;
-
-    public Transform aimPoint;
-    // 적 상태 UI
-    public RectTransform enemyStatusUIRect;
+    public Transform aimPoint; // A point to aim the weapon
 
     private bool isFiring;
 
@@ -46,73 +44,84 @@ public class startSceneWeapon : MonoBehaviour
         isFiring = false;
     }
 
-    IEnumerator Shot()
+IEnumerator Shot()
+{
+    while (Input.GetButton("Fire1"))
     {
-        while (Input.GetButton("Fire1"))
-        {
-            Vector3 targetPoint;
+        Vector3 targetPoint;
 
-            // Using the position of aimPoint as the direction
-            if (aimPoint != null)
+        // Using the position of aimPoint as the direction
+        if (aimPoint != null)
+        {
+            Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
             {
-                targetPoint = aimPoint.position;
+                targetPoint = hit.point;
             }
             else
             {
-                Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // 화면 중앙으로부터 레이 쏘기
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit))
-                {
-                    targetPoint = hit.point;
-                }
-                else
-                {
-                    targetPoint = ray.GetPoint(100); // Assume the target is far away if nothing is hit
-                }
+                targetPoint = ray.GetPoint(100); // Assume the target is far away if nothing is hit
             }
+        }
+        else
+        {
+            Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // 화면 중앙으로부터 레이 쏘기
+            RaycastHit hit;
 
-            // ammo fire
-            if (ammo != null && ammoPos != null)
+            if (Physics.Raycast(ray, out hit))
             {
-                GameObject instantBullet = Instantiate(ammo, ammoPos.position, ammoPos.rotation);
-                if (instantBullet != null)
-                {
-                    Rigidbody bulletRigid = instantBullet.GetComponent<Rigidbody>();
-                    if (bulletRigid != null)
-                    {
-                        Vector3 direction = (targetPoint - ammoPos.position).normalized;
-                        bulletRigid.velocity = direction * 50;
-
-                        if (character != null)
-                        {
-                            Quaternion targetRotation = Quaternion.LookRotation(direction);
-                            character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * 10);
-                        }
-                    }
-                }
+                targetPoint = hit.point;
             }
-
-            // ammo case 
-            if (ammoCase != null && ammoCasePos != null)
+            else
             {
-                GameObject instantCase = Instantiate(ammoCase, ammoCasePos.position, ammoCasePos.rotation);
-                if (instantCase != null)
-                {
-                    Rigidbody caseRigid = instantCase.GetComponent<Rigidbody>();
-                    if (caseRigid != null)
-                    {
-                        Vector3 caseVec = ammoCasePos.forward * Random.Range(-3, -2) + Vector3.up * Random.Range(2, 3);
-                        caseRigid.AddForce(caseVec, ForceMode.Impulse);
-                        caseRigid.AddTorque(Vector3.up * 10, ForceMode.Impulse);
-                    }
-                }
+                targetPoint = ray.GetPoint(100); // Assume the target is far away if nothing is hit
             }
-
-            yield return new WaitForSeconds(rate);
         }
 
-        isFiring = false;
+        // Adjust ammo position to be slightly above and to the right
+        Vector3 adjustedAmmoPos = ammoPos.position + transform.up * 0.5f + transform.right * 1.5f;
+
+        // ammo fire
+        if (ammo != null && ammoPos != null)
+        {
+            GameObject instantBullet = Instantiate(ammo, adjustedAmmoPos, ammoPos.rotation);
+            if (instantBullet != null)
+            {
+                Rigidbody bulletRigid = instantBullet.GetComponent<Rigidbody>();
+                if (bulletRigid != null)
+                {
+                    Vector3 direction = (targetPoint - adjustedAmmoPos).normalized;
+                    bulletRigid.velocity = direction * 50;
+
+                    if (character != null)
+                    {
+                        Quaternion targetRotation = Quaternion.LookRotation(direction);
+                        character.rotation = Quaternion.Slerp(character.rotation, targetRotation, Time.deltaTime * 10);
+                    }
+                }
+            }
+        }
+
+        // ammo case 
+        if (ammoCase != null && ammoCasePos != null)
+        {
+            GameObject instantCase = Instantiate(ammoCase, ammoCasePos.position, ammoCasePos.rotation);
+            if (instantCase != null)
+            {
+                Rigidbody caseRigid = instantCase.GetComponent<Rigidbody>();
+                if (caseRigid != null)
+                {
+                    Vector3 caseVec = ammoCasePos.forward * Random.Range(-3, -2) + Vector3.up * Random.Range(2, 3);
+                    caseRigid.AddForce(caseVec, ForceMode.Impulse);
+                    caseRigid.AddTorque(Vector3.up * 10, ForceMode.Impulse);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(rate);
     }
 
-}
+    isFiring = false;
+}}
