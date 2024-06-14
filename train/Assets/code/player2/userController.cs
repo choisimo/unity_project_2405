@@ -45,6 +45,7 @@ public class userController : MonoBehaviour
         public Camera vehicleCamera;
         public bool isDriving;
         
+        
         // Private fields
         private Rigidbody rb;            // Rigidbody component for physics calculations
         private bool isGrounded;         // Whether the player is on the ground
@@ -313,8 +314,11 @@ void ItemSwap()
 
     if ((ItemSwapDown1 || ItemSwapDown2 || ItemSwapDown3) && !isJump)
     {
+        Debug.Log($"Trying to swap to weapon index: {weaponIndex}");
         if (weaponIndex >= 0 && weaponIndex < weapons.Length && hasWeapons[weaponIndex])
         {
+            Debug.Log($"Swapping to weapon index: {weaponIndex}, weapon name: {weapons[weaponIndex].GetComponent<Item>().itemName}");
+            
             if (weaponIndex == 2)
             {
                 isWeaponPistol = true;
@@ -363,9 +367,15 @@ void ItemSwap()
                 isWeaponPistol = true;
             }
         }
+        else
+        {
+            Debug.Log($"Weapon index: {weaponIndex} not available or hasWeapons[{weaponIndex}] is false");
+        }
     }
     isSwap = false;
 }
+
+
 
         void Interaction()
         {

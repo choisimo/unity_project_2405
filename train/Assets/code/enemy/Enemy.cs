@@ -162,4 +162,11 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+        
+        public void SetAttackTarget(Transform target)
+        {
+            attackTarget = target;
+        }
+
+
     }
