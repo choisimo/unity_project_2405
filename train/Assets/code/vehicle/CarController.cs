@@ -32,7 +32,7 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    /*void OnCollisionEnter(Collision collision)
     {
         if (!collision.gameObject.CompareTag("Ground"))
         {
@@ -46,5 +46,5 @@ public class CarController : MonoBehaviour
         isDriving = driving;
         isInTrain = inTrain;
         rb.isKinematic = !driving; 
-    }
+    }*/
 }

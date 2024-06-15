@@ -33,7 +33,7 @@ public class getVehicle : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && playerController.nearObject == this.gameObject)
+        /*if (Input.GetKeyDown(KeyCode.E) && playerController.nearObject == this.gameObject)
         {
             if (carController != null)
             {
@@ -45,7 +45,7 @@ public class getVehicle : MonoBehaviour
                 trainController.SetControl(true);
                 carController.SetDriving(false);
             }
-        }
+        }*/
     }
 
 }

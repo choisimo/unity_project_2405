@@ -385,7 +385,7 @@ public class userController : MonoBehaviour
                             Debug.LogError("nearObject 의 ItemType 이 weapon 이 아닙니다.");
                         }
                     }
-                } else if (nearObject.CompareTag("train"))
+                } /*else if (nearObject.CompareTag("train"))
                 {
                     Debug.Log("near object tag is TRAIN");
                     if (isDriving)
@@ -396,7 +396,7 @@ public class userController : MonoBehaviour
                     {
                         EnterCar(nearObject);
                     }
-                } 
+                } */
                 
             }
             else if (nearObject == null)
@@ -474,29 +474,29 @@ public class userController : MonoBehaviour
             rb.isKinematic = false;
             isOnDamage = false;
         }
-        
-        /*
-         * car interaction
-         */
-        
-        
-        void EnterCar(GameObject vehicle)
-        {
-            Debug.Log("enter car");
-            this.vehicle = vehicle;
-            isDriving = true;
-            vehicle.GetComponent<CarController>().SetDriving(true);
-            gameObject.SetActive(false);
 
-        }
+    /*
+     * car interaction
 
-        void ExitCar()
-        {
-            Debug.Log("exit car");
-            isDriving = false;
-            vehicle.GetComponent<CarController>().SetDriving(false);
-            gameObject.SetActive(true);
-            transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 차량 근처에 위치시키기
-        
+
+
+    void EnterCar(GameObject vehicle)
+    {
+        Debug.Log("enter car");
+        this.vehicle = vehicle;
+        isDriving = true;
+        vehicle.GetComponent<CarController>().SetDriving(true);
+        gameObject.SetActive(false);
+
     }
+
+    void ExitCar()
+    {
+        Debug.Log("exit car");
+        isDriving = false;
+        vehicle.GetComponent<CarController>().SetDriving(false);
+        gameObject.SetActive(true);
+        transform.position = vehicle.transform.position + new Vector3(2, 0, 0); // 차량 근처에 위치시키기
+
+}*/
 }
