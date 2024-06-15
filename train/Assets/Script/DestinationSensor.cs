@@ -29,7 +29,6 @@ public class DestinationSensor : MonoBehaviour
 
         else if (other.tag == "TrainBreak")
         {
-            Debug.Log(other.tag);
             detectedDestination = other.gameObject;
             detectedDestinationState = other.gameObject.tag;
         }
@@ -39,6 +38,7 @@ public class DestinationSensor : MonoBehaviour
             detectedDestination = other.gameObject;
             detectedDestinationState = other.gameObject.tag;
         }
+
     }
 
     private void OnTriggerExit(Collider other)
