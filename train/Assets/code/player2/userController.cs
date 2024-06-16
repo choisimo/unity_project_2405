@@ -453,9 +453,8 @@ public class userController : MonoBehaviour
             FreezeRotation();
         }
 
-        public void TakeDamange(int damage)
+        public void TakeDamage(int damage)
         {
-            
             if (currentHealth <= 0)
             {
                 Debug.Log("남은 목숨이 없어 사망하였습니다.");
@@ -474,6 +473,7 @@ public class userController : MonoBehaviour
             rb.isKinematic = false;
             isOnDamage = false;
         }
+
 
     /*
      * car interaction

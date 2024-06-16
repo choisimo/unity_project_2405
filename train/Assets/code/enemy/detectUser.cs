@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class detectUser : MonoBehaviour
 {
-    public EnemyStartScene enemy; // 감지된 적 오브젝트 참조
+    public EnemyAllScene enemy; // 감지된 적 오브젝트 참조
 
     private void Start()
     {
         if (enemy == null)
         {
-            enemy = GetComponentInParent<EnemyStartScene>();
+            enemy = GetComponentInParent<EnemyAllScene>();
         }
     }
 

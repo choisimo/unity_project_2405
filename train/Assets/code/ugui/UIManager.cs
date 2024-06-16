@@ -17,13 +17,13 @@ public class UIManager : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogError("Player object is not assigned in UIManager");
+            Debug.Log("Player object is not assigned in UIManager");
             return;
         }
         
         if (healthSlider == null || ammoText == null || fuelText == null)
         {
-            Debug.LogError("One or more player UI elements are not assigned in UIManager");
+            Debug.Log("One or more player UI elements are not assigned in UIManager");
             return;
         }
 
