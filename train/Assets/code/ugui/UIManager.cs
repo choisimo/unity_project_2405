@@ -10,75 +10,61 @@ public class UIManager : MonoBehaviour
     public Slider healthSlider;
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI fuelText;
-    
-    
-    // Vehicle UI Elements
-    public TextMeshProUGUI vehicleSpeedText;
-    public TextMeshProUGUI vehicleFuelText;
-    public RawImage IconFuel;
-    
-    
-    public userController player;
-    public CarController car;
 
+    public startSceneUserController player;
 
     void Start()
     {
+        if (player == null)
+        {
+            Debug.LogError("Player object is not assigned in UIManager");
+            return;
+        }
+        
+        if (healthSlider == null || ammoText == null || fuelText == null)
+        {
+            Debug.LogError("One or more player UI elements are not assigned in UIManager");
+            return;
+        }
+
         UpdateHealthUI();
         UpdateAmmoUI();
         UpdateFuelUI();
-        UpdateVehicleUI(false); // Initially, vehicle UI should be hidden
     }
 
     public void UpdateHealthUI()
     {
-        healthSlider.value = player.currentHealth;
+        if (healthSlider != null && player != null)
+        {
+            healthSlider.value = player.currentHealth;
+        }
+        else
+        {
+            Debug.LogError("Health slider or player object is null in UpdateHealthUI");
+        }
     }
 
     public void UpdateAmmoUI()
     {
-        ammoText.text = "Ammo: " + player.ammo.ToString();
+        if (ammoText != null && player != null)
+        {
+            ammoText.text = player.ammo.ToString();
+        }
+        else
+        {
+            Debug.LogError("Ammo text or player object is null in UpdateAmmoUI");
+        }
     }
 
     public void UpdateFuelUI()
     {
-        fuelText.text = "Fuel: " + player.fuel.ToString();
-    }
-
-    public void UpdateVehicleUI(bool isDriving)
-    {
-        if (isDriving)
+        if (fuelText != null && player != null)
         {
-            // Enable vehicle UI
-            vehicleSpeedText.gameObject.SetActive(true);
-            vehicleFuelText.gameObject.SetActive(true);
-            IconFuel.gameObject.SetActive(true);
-
-            // Disable player UI
-            ammoText.gameObject.SetActive(false);
-            fuelText.gameObject.SetActive(false);
-            healthSlider.gameObject.SetActive(false);
+            fuelText.text = player.fuel.ToString();
         }
         else
         {
-            // Enable player UI
-            ammoText.gameObject.SetActive(true);
-            IconFuel.gameObject.SetActive(true);
-
-            // Disable vehicle UI
-            vehicleSpeedText.gameObject.SetActive(false);
-            vehicleFuelText.gameObject.SetActive(false);
-            healthSlider.gameObject.SetActive(true);
+            Debug.LogError("Fuel text or player object is null in UpdateFuelUI");
         }
-    }
-
-    public void UpdateVehicleSpeedUI(float speed)
-    {
-        vehicleSpeedText.text = "Speed: " + speed.ToString("F1") + " km/h";
-    }
-
-    public void UpdateVehicleFuelUI(int fuel)
-    {
-        vehicleFuelText.text = "Fuel: " + fuel.ToString();
     }
 }

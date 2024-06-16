@@ -49,7 +49,7 @@ public class startSceneUserController : MonoBehaviour
     private bool isWeaponPistol;
     private startSceneWeapon equipWeapon;              // Currently equipped weapon
     public Camera mainCamera;
-    Animator animator;               // Animator component for handling animations
+    public Animator animator;               // Animator component for handling animations
     // Private fields
     private bool isJump;          // Whether the player is currently jumping
     private bool isJumpOnAir;
@@ -68,6 +68,19 @@ public class startSceneUserController : MonoBehaviour
         if (crosshair != null)
         {
             crosshair.rectTransform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        }
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator component not found on " + gameObject.name);
+        }
+        if (uiManager == null)
+        {
+            uiManager = FindObjectOfType<UIManager>();
+            if (uiManager == null)
+            {
+                Debug.LogError("UIManager not found in the scene.");
+            }
         }
     }
 
@@ -100,9 +113,15 @@ public class startSceneUserController : MonoBehaviour
 
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
         move.y = 0f; // Y축 이동을 제거하여 플레이어가 공중으로 뜨는 것을 방지
+
+        // Transform을 사용하여 위치를 변경합니다.
+        transform.Translate(move * walkSpeed * Time.deltaTime, Space.World);
+
+        /*Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        move.y = 0f; // Y축 이동을 제거하여 플레이어가 공중으로 뜨는 것을 방지
         Vector3 moveVelocity = move.normalized * walkSpeed;
 
-        rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
+        rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);*/
     }
 
     private void Jump()
@@ -204,26 +223,37 @@ public class startSceneUserController : MonoBehaviour
         isFireReady = equipWeapon.rate < fireDelay;
 
         if (fDown && isFireReady && !isSwap)
-        {   
-            Debug.Log("start Attack");
-            
-            equipWeapon.Use();
-            if (equipWeapon.weapontype == startSceneWeapon.weaponType.Melee) {
-                animator.SetTrigger("doSwing");
-            } else {
-                if (equipWeapon.GetComponent<Item>().itemIndex == 2)
-                {
-                    isWeaponPistol = true;
+        {
+            if (ammo > 0) // 탄약이 있는지 확인
+            {
+                Debug.Log("start Attack");
+
+                equipWeapon.Use();
+                if (equipWeapon.weapontype == startSceneWeapon.weaponType.Melee) {
+                    animator.SetTrigger("doSwing");
+                } else {
+                    if (equipWeapon.GetComponent<Item>().itemIndex == 2)
+                    {
+                        isWeaponPistol = true;
+                    }
+                    else
+                    {
+                        isWeaponPistol = false;
+                    }
+                    animator.SetTrigger("doShot");
+                    Debug.Log("animator doShot");
                 }
-                else
-                {
-                    isWeaponPistol = false;
-                }
-                //animator.SetTrigger("doShot");
+                ammo--; // 총을 쏜 후 탄약 감소
+                //uiManager.UpdateAmmoUI(ammo); // UI 업데이트
+                fireDelay = 0;
             }
-            fireDelay = 0;
+            else
+            {
+                Debug.Log("No ammo left");
+            }
         }
     }
+
 
     void ItemSwap() 
     {
